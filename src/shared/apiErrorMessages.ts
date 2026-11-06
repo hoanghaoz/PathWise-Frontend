@@ -21,6 +21,11 @@ const MESSAGES: Record<string, string> = {
     "Tài khoản này chưa có mật khẩu. Hãy dùng Quên mật khẩu để đặt mật khẩu.",
   "Invalid or expired refresh token":
     "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+  // Learning profile. Other profile messages (invalid target skills, unknown
+  // direction/skill, profile exists) are added once the exact strings are known.
+  "At least one field is required": "Hãy thay đổi ít nhất một thông tin.",
+  "Target skills are required when changing direction":
+    "Khi đổi hướng học, bạn cần chọn lại kỹ năng mục tiêu.",
 };
 
 /** Vietnamese sentence to show for a failed request. */

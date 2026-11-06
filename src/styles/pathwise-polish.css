@@ -1,0 +1,925 @@
+/*
+ * PathWise polish — refinements on top of Design Spec 2.1.
+ *
+ * Loaded AFTER pathwise.css, so equal specificity wins by order. Do not
+ * restyle in pathwise.css (it is a verbatim copy of the design export); put
+ * every visual refinement here. Motion is CSS only and is wrapped in
+ * `prefers-reduced-motion: no-preference`.
+ *
+ * Keeps the brand: navy #13223F, mint (#5FCF9B decorative, #1E9A6B / #0E6A4C
+ * for selection and text), Be Vietnam Pro. Adds elevation where something is
+ * interactive or is the focus of a screen, instead of flat hairlines.
+ */
+
+:root {
+  --mint-wash: #eef9f4;
+  --bear-tan: #b9853f;
+  --shadow-1:
+    0 1px 2px rgba(19, 34, 63, 0.06), 0 2px 6px rgba(19, 34, 63, 0.05);
+  --shadow-2:
+    0 2px 4px rgba(19, 34, 63, 0.05), 0 14px 32px -6px rgba(19, 34, 63, 0.14);
+  --ring: 0 0 0 3px rgba(30, 154, 107, 0.28);
+  --r-panel: 10px;
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Type ---------- */
+.hero h1 {
+  font-size: clamp(2.25rem, 1.4rem + 3vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.hero .lead,
+.section-head p,
+.principles-row p,
+.page-head .lead {
+  max-width: 62ch;
+}
+.section-head h2,
+.lp-cta h2 {
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.section-title {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--fs-16);
+  color: var(--ink);
+}
+.eyebrow {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--fs-14);
+  font-weight: 600;
+}
+.check-meta,
+.kv dd,
+.metric .num,
+.difficulty-text {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Controls ---------- */
+:focus-visible {
+  outline-color: var(--accent-strong);
+}
+.btn {
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform 80ms var(--ease-out);
+}
+.btn:active:not([disabled]):not([aria-disabled="true"]) {
+  transform: translateY(1px);
+}
+.btn-primary {
+  box-shadow:
+    var(--shadow-1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.btn-secondary {
+  box-shadow: var(--shadow-1);
+}
+@media (hover: hover) {
+  .btn-primary:hover:not([disabled]) {
+    box-shadow:
+      0 6px 16px -4px rgba(19, 34, 63, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+  .btn-secondary:hover:not([disabled]) {
+    border-color: var(--ink-subtle);
+  }
+}
+.input,
+.select {
+  background: var(--surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+@media (hover: hover) {
+  .input:hover:not(:focus),
+  .select:hover:not(:focus) {
+    border-color: var(--ink-subtle);
+  }
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  box-shadow: var(--ring);
+}
+
+/* ---------- Raised surfaces ---------- */
+.card-raised {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  box-shadow: var(--shadow-1);
+}
+.card-raised.card-pad {
+  padding: var(--s-24);
+}
+@media (min-width: 768px) {
+  .card-raised.card-pad {
+    padding: var(--s-32);
+  }
+}
+
+/* ---------- Landing ---------- */
+.lp-header {
+  box-shadow: 0 1px 0 var(--border);
+}
+.hero-visual {
+  padding: var(--s-20, 20px);
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+}
+.lp-alt {
+  background: var(--surface-alt);
+  border: 0;
+}
+
+/* The four steps are a real sequence: join them with a rail. */
+.steps-rail {
+  display: grid;
+  gap: var(--s-32);
+  grid-template-columns: minmax(0, 1fr);
+  counter-reset: none;
+}
+.steps-rail .step-card {
+  position: relative;
+  padding: 0 0 0 56px;
+  border-top: 0;
+  gap: var(--s-8);
+}
+.steps-rail .step-n {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: var(--fs-16);
+  font-weight: 700;
+  box-shadow: 0 0 0 4px var(--surface-alt);
+}
+.steps-rail .step-card:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: calc(var(--s-32) * -1);
+  width: 2px;
+  background: var(--border-strong);
+}
+.steps-rail h3 {
+  font-size: var(--fs-18);
+  padding-top: var(--s-8);
+}
+@media (min-width: 1024px) {
+  .steps-rail {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--s-24);
+  }
+  .steps-rail .step-card {
+    padding: 56px 0 0;
+  }
+  .steps-rail .step-card:not(:last-child)::before {
+    left: 48px;
+    right: calc(var(--s-24) * -1);
+    top: 19px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+}
+
+@media (min-width: 768px) {
+  .principles-row > div {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .principles-row > div + div {
+    border-left: 1px solid var(--border);
+    padding-left: var(--s-24);
+  }
+}
+
+.lp-cta-band {
+  background: var(--mint-wash);
+  border-top: 1px solid rgba(30, 154, 107, 0.18);
+}
+.lp-cta-band .lp-cta {
+  justify-items: stretch;
+}
+
+/* Hero graph: edges and nodes appear layer by layer, once. */
+@media (prefers-reduced-motion: no-preference) {
+  .g-node.reveal {
+    opacity: 0;
+    animation: g-reveal 420ms var(--ease-out-quint) forwards;
+    animation-delay: calc(var(--i, 0) * 170ms + 150ms);
+  }
+  .g-edge.reveal {
+    opacity: 0;
+    animation: g-reveal 420ms var(--ease-out-quint) forwards;
+    animation-delay: calc(var(--i, 0) * 170ms + 320ms);
+  }
+}
+@keyframes g-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Auth & focused pages ---------- */
+.auth-wrap {
+  background: var(--surface-alt);
+}
+.auth-card.card {
+  padding: var(--s-24);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+}
+@media (min-width: 768px) {
+  .auth-card.card {
+    padding: var(--s-32);
+  }
+}
+
+/* ---------- App shell ---------- */
+.topnav {
+  transition: box-shadow var(--dur) var(--ease-out);
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .topnav {
+      animation: nav-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 56px;
+    }
+  }
+}
+@keyframes nav-lift {
+  from {
+    box-shadow: 0 0 0 rgba(19, 34, 63, 0);
+  }
+  to {
+    box-shadow: 0 8px 20px -12px rgba(19, 34, 63, 0.28);
+  }
+}
+.tn-link {
+  border-bottom-width: 3px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.topnav-user .avatar {
+  width: 32px;
+  height: 32px;
+  font-size: var(--fs-14);
+  margin-right: var(--s-4);
+}
+
+/* ---------- Empty / coming-soon ---------- */
+.card.empty {
+  gap: var(--s-12);
+}
+.empty-tile {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--mint-wash);
+  color: var(--accent-ink);
+  box-shadow: inset 0 0 0 1px rgba(30, 154, 107, 0.2);
+}
+.empty-tile .icon-lg {
+  width: 28px;
+  height: 28px;
+  color: inherit;
+}
+.empty-preview {
+  display: grid;
+  gap: var(--s-8);
+  width: min(420px, 100%);
+  margin-top: var(--s-16);
+  padding: var(--s-16);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-panel);
+  text-align: left;
+}
+.empty-preview > span {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--surface-alt);
+}
+.empty-preview > span:nth-child(1) {
+  width: 55%;
+}
+.empty-preview > span:nth-child(2) {
+  width: 90%;
+}
+.empty-preview > span:nth-child(3) {
+  width: 72%;
+}
+
+/* ---------- Loading ---------- */
+.skeleton {
+  display: block;
+  min-height: 1em;
+  border-radius: 6px;
+  background: var(--surface-alt);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-alt) 0%,
+      #fafbfc 50%,
+      var(--surface-alt) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Toasts ---------- */
+.toast {
+  border-left: 3px solid var(--brand-mint);
+  box-shadow: var(--shadow-2);
+}
+.toast .icon {
+  color: var(--brand-mint);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toast {
+    animation: toast-in 280ms var(--ease-out-quint);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* ---------- Direction cards & skill rows (onboarding, profile) ---------- */
+.dir-card {
+  position: relative;
+  padding: var(--s-16);
+  border: 1px solid var(--border);
+  border-radius: var(--r-panel);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+@media (hover: hover) {
+  .dir-card:not([disabled]):hover {
+    border-color: var(--ink-subtle);
+    box-shadow: var(--shadow-2);
+  }
+}
+.dir-card[aria-pressed="true"] {
+  border-color: var(--accent-strong);
+  background: var(--mint-wash);
+  box-shadow:
+    0 0 0 1px var(--accent-strong),
+    var(--shadow-1);
+}
+.dir-card[aria-pressed="true"] .dir-top > .strong::after {
+  content: none;
+}
+.dir-card .dir-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+}
+.dir-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface-alt);
+  color: var(--primary);
+}
+.dir-card[aria-pressed="true"] .dir-tile {
+  background: var(--surface);
+  color: var(--accent-ink);
+}
+.dir-check {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  color: transparent;
+  background: var(--surface);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.dir-check .icon {
+  width: 14px;
+  height: 14px;
+}
+.dir-card[aria-pressed="true"] .dir-check {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: #fff;
+}
+
+.check-row {
+  padding: var(--s-12) var(--s-16);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+.check-row:has(input:checked) {
+  border-color: var(--accent-strong);
+  background: var(--mint-wash);
+}
+.check-row:has(input:checked) .strong {
+  color: var(--accent-ink);
+}
+.check-row:has(input:focus-visible) {
+  outline-color: var(--accent-strong);
+}
+.check-row .check-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+.check-row .difficulty i {
+  width: 7px;
+  height: 7px;
+}
+.check-row .difficulty i.on {
+  background: var(--accent-strong);
+}
+.skill-list {
+  display: grid;
+  gap: var(--s-8);
+}
+@media (min-width: 768px) {
+  .skill-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Onboarding steps ---------- */
+.ob-step {
+  display: grid;
+  gap: var(--s-16);
+}
+.ob-step-head {
+  display: flex;
+  gap: var(--s-12);
+  align-items: flex-start;
+}
+.ob-step-head h2 {
+  font-size: var(--fs-20);
+  letter-spacing: -0.015em;
+}
+.ob-step-head p {
+  margin-top: 2px;
+  color: var(--ink-muted);
+  font-size: var(--fs-14);
+  max-width: 62ch;
+}
+.ob-n {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--fs-14);
+}
+.ob-form {
+  display: grid;
+  gap: var(--s-24);
+}
+.sticky-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+  margin: 0 calc(var(--s-16) * -1);
+  padding: var(--s-12) var(--s-16);
+  padding-bottom: calc(var(--s-12) + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -8px 20px -14px rgba(19, 34, 63, 0.25);
+}
+@supports (backdrop-filter: blur(8px)) {
+  .sticky-bar {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+  }
+}
+@media (min-width: 768px) {
+  .sticky-bar {
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--r-panel);
+    box-shadow: var(--shadow-2);
+  }
+}
+.sticky-bar .tally {
+  font-size: var(--fs-14);
+  color: var(--ink-muted);
+}
+.sticky-bar .tally strong {
+  color: var(--ink);
+}
+
+/* ---------- Profile summary ---------- */
+.lp-summary {
+  display: grid;
+  gap: var(--s-24);
+}
+.lp-metrics {
+  display: grid;
+  gap: var(--s-16);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 640px) {
+  .lp-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.lp-metric {
+  padding: var(--s-16);
+  border-radius: 8px;
+  background: var(--surface-alt);
+  display: grid;
+  gap: 2px;
+  align-content: start;
+}
+.lp-metric .cap {
+  font-size: var(--fs-14);
+  color: var(--ink-muted);
+}
+.lp-metric .val {
+  font-size: var(--fs-20);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.lp-metric .sub {
+  font-size: var(--fs-14);
+  color: var(--ink-subtle);
+}
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+/* ---------- Admin skill graph ---------- */
+.adm-canvas {
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-panel);
+  max-height: 72vh;
+}
+.g-node.clickable:hover rect {
+  stroke: var(--primary);
+}
+.g-node.selected rect {
+  stroke: var(--accent-strong);
+  stroke-width: 3;
+}
+.g-node.related rect {
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+.g-edge {
+  transition: stroke var(--dur-fast) var(--ease-out);
+}
+.panel.card-raised {
+  padding: var(--s-20, 20px);
+}
+.edge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-8) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-14);
+}
+.edge-row:last-child {
+  border-bottom: 0;
+}
+.edge-row .od-fill {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.edge-row .arrow {
+  color: var(--ink-subtle);
+}
+
+/* Fields in a grid row must not stretch their rows when a neighbour has help text. */
+.field {
+  align-content: start;
+}
+
+/* Inside an existing card (profile edit): quieter step headings, divided by a rule. */
+.ob-step:not(.card-raised) .ob-step-head h2 {
+  font-size: var(--fs-18);
+}
+.form-stack > .ob-step:not(.card-raised) ~ .ob-step:not(.card-raised) {
+  padding-top: var(--s-24);
+  border-top: 1px solid var(--border);
+}
+
+.edge-row .btn-ghost {
+  color: var(--danger);
+}
+@media (hover: hover) {
+  .edge-row .btn-ghost:hover:not([disabled]) {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+}
+
+/* =====================================================================
+   Motion — page entrance, press feedback, small state transitions.
+   Everything that moves is inside `prefers-reduced-motion: no-preference`.
+   Easing: ease-out-quint for entrances, a slight overshoot for press release.
+   ===================================================================== */
+:root {
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* The ink under the active nav link slides between links (see AppShell). */
+.topnav-links {
+  position: relative;
+}
+.tn-ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: var(--ink-w, 0px);
+  transform: translateX(var(--ink-x, 0px));
+  border-radius: 3px 3px 0 0;
+  background: var(--accent-strong);
+  pointer-events: none;
+}
+.topnav-links:has(.tn-ink) .tn-link[aria-current="page"] {
+  border-bottom-color: transparent;
+}
+
+/* Press ink: a soft circle grows from the pointer (position set by pressOrigin.ts). */
+.btn {
+  position: relative;
+  overflow: hidden;
+  --press-fx: rgba(19, 34, 63, 0.1);
+}
+.btn-primary,
+.btn-danger-solid {
+  --press-fx: rgba(255, 255, 255, 0.24);
+}
+@property --r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--px, 50%) var(--py, 50%),
+    var(--press-fx) var(--r),
+    transparent calc(var(--r) + 1px)
+  );
+  opacity: 0;
+  /* On release the ink fades out first, then the radius resets. */
+  transition:
+    opacity 380ms ease-out,
+    --r 0s 380ms;
+}
+.btn:active:not([disabled]):not([aria-disabled="true"])::after {
+  --r: 480px;
+  opacity: 1;
+  transition:
+    --r 600ms var(--ease-out-quint),
+    opacity 0s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Buttons: lift on hover, squash on press, spring back on release. */
+  .btn {
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      transform 260ms var(--ease-spring);
+  }
+  @media (hover: hover) {
+    .btn-primary:hover:not([disabled]) {
+      transform: translateY(-1px);
+    }
+  }
+  .btn:active:not([disabled]):not([aria-disabled="true"]) {
+    transform: scale(0.97);
+    transition-duration:
+      var(--dur-fast), var(--dur-fast), var(--dur-fast), 80ms;
+  }
+  .icon-btn {
+    transition: transform 260ms var(--ease-spring);
+  }
+  .icon-btn:active {
+    transform: scale(0.88);
+    transition-duration: 80ms;
+  }
+  .dir-card,
+  .check-row {
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      transform 260ms var(--ease-spring);
+  }
+  @media (hover: hover) {
+    .dir-card:not([disabled]):hover {
+      transform: translateY(-2px);
+    }
+  }
+  .dir-card:active:not([disabled]) {
+    transform: scale(0.985);
+    transition-duration:
+      var(--dur-fast), var(--dur-fast), var(--dur-fast), 80ms;
+  }
+  .check-row:active {
+    transform: scale(0.99);
+    transition-duration: var(--dur-fast), var(--dur-fast), 80ms;
+  }
+
+  /* Selection confirms itself with a small pop. */
+  .dir-card[aria-pressed="true"] .dir-check,
+  .check-row:has(input:checked) input {
+    animation: pop 320ms var(--ease-out-quint);
+  }
+
+  /* Active nav ink glides; first measurement grows it in. */
+  .tn-ink {
+    transition:
+      transform 380ms var(--ease-out-quint),
+      width 380ms var(--ease-out-quint);
+  }
+  .tn-link:active {
+    transform: scale(0.96);
+  }
+
+  /* Route entrance: the page's blocks rise in one after another. */
+  .route-enter > .page > *,
+  .route-enter.page > * {
+    animation: rise-in 460ms var(--ease-out-quint) both;
+  }
+  .route-enter > .page > :nth-child(2),
+  .route-enter.page > :nth-child(2) {
+    animation-delay: 60ms;
+  }
+  .route-enter > .page > :nth-child(3),
+  .route-enter.page > :nth-child(3) {
+    animation-delay: 120ms;
+  }
+  .route-enter > .page > :nth-child(4),
+  .route-enter.page > :nth-child(4) {
+    animation-delay: 180ms;
+  }
+  .route-enter > .page > :nth-child(n + 5),
+  .route-enter.page > :nth-child(n + 5) {
+    animation-delay: 240ms;
+  }
+  .auth-card.card {
+    animation: card-in 480ms var(--ease-out-quint) both;
+  }
+  .hero .od-stack > * {
+    animation: rise-in 560ms var(--ease-out-quint) both;
+  }
+  .hero .od-stack > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+  .hero .od-stack > :nth-child(3) {
+    animation-delay: 140ms;
+  }
+  .hero .od-stack > :nth-child(4) {
+    animation-delay: 210ms;
+  }
+
+  /* Content that replaces a skeleton or another view. */
+  .swap-in,
+  .edge-row {
+    animation: rise-in 320ms var(--ease-out-quint) both;
+  }
+  .skill-list > * {
+    animation: rise-in 360ms var(--ease-out-quint) both;
+  }
+  .skill-list > :nth-child(2) {
+    animation-delay: 30ms;
+  }
+  .skill-list > :nth-child(3) {
+    animation-delay: 60ms;
+  }
+  .skill-list > :nth-child(4) {
+    animation-delay: 90ms;
+  }
+  .skill-list > :nth-child(5) {
+    animation-delay: 120ms;
+  }
+  .skill-list > :nth-child(n + 6) {
+    animation-delay: 150ms;
+  }
+
+  /* Graph: selecting a node fades the rest, strokes ease. */
+  .g-node {
+    transition: opacity 220ms var(--ease-out);
+  }
+  .g-node rect {
+    transition:
+      stroke 160ms var(--ease-out),
+      stroke-width 160ms var(--ease-out);
+  }
+  .toast.leaving {
+    animation: toast-out 220ms var(--ease-out-quint) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::after,
+  .btn:active:not([disabled]):not([aria-disabled="true"])::after {
+    transition: none;
+  }
+}

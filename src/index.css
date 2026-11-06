@@ -8,6 +8,7 @@
 
 @import "./styles/od-layout.css";
 @import "./styles/pathwise.css";
+@import "./styles/pathwise-polish.css";
 
 /*
  * Design tokens exposed to Tailwind utilities (bg-background, text-primary…),
