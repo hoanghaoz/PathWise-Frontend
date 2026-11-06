@@ -107,3 +107,11 @@ Lỗi từ server được dịch qua `toUserMessage`. Sau 5 lần đăng nhập
 - **Không** viết ``className={`a${cond ? " b" : ""}`}``. Plugin `prettier-plugin-tailwindcss` sẽ cắt mất dấu cách và dính hai class vào nhau. Hãy dùng `cx("a", cond && "b")`.
 - Token nằm trong `localStorage`, nên đừng render HTML không tin cậy (`dangerouslySetInnerHTML`).
 - Thêm màn mới có API: tạo `services/xxxService.ts`, dùng `handleApiError` + `toUserMessage`, rồi thay `ComingSoonPage` trong `App.tsx`.
+
+## Tinh chỉnh giao diện (UI polish)
+
+- Mọi chỉnh sửa hình thức nằm trong `src/styles/pathwise-polish.css`, nạp **sau** `pathwise.css` (cùng độ ưu tiên, file sau thắng). Không sửa `pathwise.css`: đó là bản chép nguyên từ thiết kế.
+- Thêm bề nổi (`.card-raised`, `--shadow-1/2`) cho thứ có thể thao tác hoặc là trọng tâm màn hình; chuyển động chỉ bằng CSS và nằm trong `prefers-reduced-motion: no-preference`.
+- Skill graph ở hero landing hiện dần theo tầng một lần (`SkillGraph reveal`). Chỉ animate `opacity`, vì `transform` của node đang dùng để đặt vị trí.
+- `SkillGraph` còn có `selected` / `onSelect` (chọn node, làm mờ phần không liên quan, bàn phím Enter/Space) và `naturalSize` (vẽ đúng cỡ pixel, cuộn ngang) cho trang admin.
+- Trạng thái đang tải dùng `components/Skeleton.tsx` thay cho chữ "Đang tải…".

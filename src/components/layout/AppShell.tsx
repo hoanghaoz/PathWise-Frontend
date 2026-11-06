@@ -56,6 +56,9 @@ const AppShell = () => {
               ))}
             </nav>
             <div className="topnav-user">
+              <span className="avatar" aria-hidden="true">
+                {user.username.charAt(0).toUpperCase()}
+              </span>
               <span className="tn-name od-truncate">{user.username}</span>
               <button
                 type="button"

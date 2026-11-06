@@ -1,10 +1,14 @@
 import { useMemo } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 
+import { cx } from "../../shared/cx";
 import {
   NODE_H,
   NODE_W,
   STATUS_LABEL,
+  layerMap,
   layoutGraph,
+  relatedSlugs,
 } from "../../shared/skillGraph";
 import type { GraphSkill, NodeResult } from "../../shared/skillGraph";
 
@@ -17,6 +21,19 @@ interface SkillGraphProps {
   /** Target skills get a thick border and a ring icon. */
   targets?: Set<string>;
   vertical?: boolean;
+  /**
+   * Text under each skill name (by slug). Without it the line shows the
+   * assessment status, which is not meaningful outside the result screen.
+   */
+  subLabels?: Record<string, string>;
+  /** Nodes and edges fade in layer by layer once (landing hero). */
+  reveal?: boolean;
+  /** Draw at the layout's own pixel size (scrolls) instead of scaling to fit. */
+  naturalSize?: boolean;
+  /** Slug of the selected skill: its neighbourhood stays lit, the rest dims. */
+  selected?: string | null;
+  /** Makes nodes keyboard-focusable buttons. Called with the clicked slug. */
+  onSelect?: (slug: string) => void;
   /** Accessible name of the whole graph. */
   label: string;
 }
@@ -39,6 +56,11 @@ const SkillGraph = ({
   results = {},
   targets = new Set(),
   vertical = false,
+  subLabels,
+  reveal = false,
+  naturalSize = false,
+  selected = null,
+  onSelect,
   label,
 }: SkillGraphProps) => {
   const layout = useMemo(
@@ -46,10 +68,27 @@ const SkillGraph = ({
     [skills, vertical],
   );
 
+  const layers = useMemo(() => layerMap(skills), [skills]);
+  const related = useMemo(
+    () => (selected ? relatedSlugs(skills, selected) : null),
+    [skills, selected],
+  );
+  const interactive = onSelect !== undefined;
+
+  const onKeyDown = (slug: string) => (e: KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect?.(slug);
+    }
+  };
+
   return (
     <svg
       viewBox={`0 0 ${layout.width} ${layout.height}`}
-      role="list"
+      width={naturalSize ? layout.width : undefined}
+      height={naturalSize ? layout.height : undefined}
+      style={naturalSize ? { maxWidth: "none" } : undefined}
+      role={interactive ? "group" : "list"}
       aria-label={label}
     >
       <defs>
@@ -71,33 +110,60 @@ const SkillGraph = ({
         </clipPath>
       </defs>
       <g>
-        {layout.edges.map((edge) => (
-          <path
-            key={`${edge.from}->${edge.to}`}
-            className="g-edge"
-            d={edge.d}
-            markerEnd={`url(#${id}-a)`}
-          />
-        ))}
+        {layout.edges.map((edge) => {
+          const lit =
+            selected !== null &&
+            related !== null &&
+            [edge.from, edge.to].every(
+              (slug) => slug === selected || related.has(slug),
+            );
+          return (
+            <path
+              key={`${edge.from}->${edge.to}`}
+              className={cx(
+                "g-edge",
+                reveal && "reveal",
+                selected !== null && (lit ? "hl" : "dim"),
+              )}
+              style={{ "--i": layers[edge.from] ?? 0 } as CSSProperties}
+              d={edge.d}
+              markerEnd={`url(#${id}-a)`}
+            />
+          );
+        })}
       </g>
       <g>
         {skills.map((skill) => {
           const p = layout.pos[skill.slug];
           const result = results[skill.slug];
           const isTarget = targets.has(skill.slug);
-          const classes = ["g-node"];
-          if (result) {
-            classes.push(`st-${result.status}`);
-            if (result.source === "INFERRED") classes.push("src-INFERRED");
-          }
-          if (isTarget) classes.push("target");
-          const sub = subLabel(result);
+          const isSelected = selected === skill.slug;
+          const isRelated = related?.has(skill.slug) ?? false;
+          const classes = cx(
+            "g-node",
+            result && `st-${result.status}`,
+            result?.source === "INFERRED" && "src-INFERRED",
+            isTarget && "target",
+            reveal && "reveal",
+            interactive && "clickable",
+            isSelected && "selected",
+            isRelated && "related",
+            selected !== null && !isSelected && !isRelated && "dim",
+          );
+          const sub = subLabels
+            ? (subLabels[skill.slug] ?? "")
+            : subLabel(result);
           return (
             <g
               key={skill.slug}
-              className={classes.join(" ")}
+              className={classes}
+              style={{ "--i": layers[skill.slug] ?? 0 } as CSSProperties}
               transform={`translate(${p.x} ${p.y})`}
-              role="listitem"
+              role={interactive ? "button" : "listitem"}
+              tabIndex={interactive ? 0 : undefined}
+              aria-pressed={interactive ? isSelected : undefined}
+              onClick={interactive ? () => onSelect(skill.slug) : undefined}
+              onKeyDown={interactive ? onKeyDown(skill.slug) : undefined}
               aria-label={`${skill.name}. ${sub}${isTarget ? ". Kỹ năng mục tiêu" : ""}`}
             >
               <title>{skill.name}</title>
