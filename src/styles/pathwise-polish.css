@@ -679,3 +679,247 @@
     color: var(--danger);
   }
 }
+
+/* =====================================================================
+   Motion — page entrance, press feedback, small state transitions.
+   Everything that moves is inside `prefers-reduced-motion: no-preference`.
+   Easing: ease-out-quint for entrances, a slight overshoot for press release.
+   ===================================================================== */
+:root {
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* The ink under the active nav link slides between links (see AppShell). */
+.topnav-links {
+  position: relative;
+}
+.tn-ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: var(--ink-w, 0px);
+  transform: translateX(var(--ink-x, 0px));
+  border-radius: 3px 3px 0 0;
+  background: var(--accent-strong);
+  pointer-events: none;
+}
+.topnav-links:has(.tn-ink) .tn-link[aria-current="page"] {
+  border-bottom-color: transparent;
+}
+
+/* Press ink: a soft circle grows from the pointer (position set by pressOrigin.ts). */
+.btn {
+  position: relative;
+  overflow: hidden;
+  --press-fx: rgba(19, 34, 63, 0.1);
+}
+.btn-primary,
+.btn-danger-solid {
+  --press-fx: rgba(255, 255, 255, 0.24);
+}
+@property --r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--px, 50%) var(--py, 50%),
+    var(--press-fx) var(--r),
+    transparent calc(var(--r) + 1px)
+  );
+  opacity: 0;
+  /* On release the ink fades out first, then the radius resets. */
+  transition:
+    opacity 380ms ease-out,
+    --r 0s 380ms;
+}
+.btn:active:not([disabled]):not([aria-disabled="true"])::after {
+  --r: 480px;
+  opacity: 1;
+  transition:
+    --r 600ms var(--ease-out-quint),
+    opacity 0s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Buttons: lift on hover, squash on press, spring back on release. */
+  .btn {
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      transform 260ms var(--ease-spring);
+  }
+  @media (hover: hover) {
+    .btn-primary:hover:not([disabled]) {
+      transform: translateY(-1px);
+    }
+  }
+  .btn:active:not([disabled]):not([aria-disabled="true"]) {
+    transform: scale(0.97);
+    transition-duration:
+      var(--dur-fast), var(--dur-fast), var(--dur-fast), 80ms;
+  }
+  .icon-btn {
+    transition: transform 260ms var(--ease-spring);
+  }
+  .icon-btn:active {
+    transform: scale(0.88);
+    transition-duration: 80ms;
+  }
+  .dir-card,
+  .check-row {
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
+      transform 260ms var(--ease-spring);
+  }
+  @media (hover: hover) {
+    .dir-card:not([disabled]):hover {
+      transform: translateY(-2px);
+    }
+  }
+  .dir-card:active:not([disabled]) {
+    transform: scale(0.985);
+    transition-duration:
+      var(--dur-fast), var(--dur-fast), var(--dur-fast), 80ms;
+  }
+  .check-row:active {
+    transform: scale(0.99);
+    transition-duration: var(--dur-fast), var(--dur-fast), 80ms;
+  }
+
+  /* Selection confirms itself with a small pop. */
+  .dir-card[aria-pressed="true"] .dir-check,
+  .check-row:has(input:checked) input {
+    animation: pop 320ms var(--ease-out-quint);
+  }
+
+  /* Active nav ink glides; first measurement grows it in. */
+  .tn-ink {
+    transition:
+      transform 380ms var(--ease-out-quint),
+      width 380ms var(--ease-out-quint);
+  }
+  .tn-link:active {
+    transform: scale(0.96);
+  }
+
+  /* Route entrance: the page's blocks rise in one after another. */
+  .route-enter > .page > *,
+  .route-enter.page > * {
+    animation: rise-in 460ms var(--ease-out-quint) both;
+  }
+  .route-enter > .page > :nth-child(2),
+  .route-enter.page > :nth-child(2) {
+    animation-delay: 60ms;
+  }
+  .route-enter > .page > :nth-child(3),
+  .route-enter.page > :nth-child(3) {
+    animation-delay: 120ms;
+  }
+  .route-enter > .page > :nth-child(4),
+  .route-enter.page > :nth-child(4) {
+    animation-delay: 180ms;
+  }
+  .route-enter > .page > :nth-child(n + 5),
+  .route-enter.page > :nth-child(n + 5) {
+    animation-delay: 240ms;
+  }
+  .auth-card.card {
+    animation: card-in 480ms var(--ease-out-quint) both;
+  }
+  .hero .od-stack > * {
+    animation: rise-in 560ms var(--ease-out-quint) both;
+  }
+  .hero .od-stack > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+  .hero .od-stack > :nth-child(3) {
+    animation-delay: 140ms;
+  }
+  .hero .od-stack > :nth-child(4) {
+    animation-delay: 210ms;
+  }
+
+  /* Content that replaces a skeleton or another view. */
+  .swap-in,
+  .edge-row {
+    animation: rise-in 320ms var(--ease-out-quint) both;
+  }
+  .skill-list > * {
+    animation: rise-in 360ms var(--ease-out-quint) both;
+  }
+  .skill-list > :nth-child(2) {
+    animation-delay: 30ms;
+  }
+  .skill-list > :nth-child(3) {
+    animation-delay: 60ms;
+  }
+  .skill-list > :nth-child(4) {
+    animation-delay: 90ms;
+  }
+  .skill-list > :nth-child(5) {
+    animation-delay: 120ms;
+  }
+  .skill-list > :nth-child(n + 6) {
+    animation-delay: 150ms;
+  }
+
+  /* Graph: selecting a node fades the rest, strokes ease. */
+  .g-node {
+    transition: opacity 220ms var(--ease-out);
+  }
+  .g-node rect {
+    transition:
+      stroke 160ms var(--ease-out),
+      stroke-width 160ms var(--ease-out);
+  }
+  .toast.leaving {
+    animation: toast-out 220ms var(--ease-out-quint) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::after,
+  .btn:active:not([disabled]):not([aria-disabled="true"])::after {
+    transition: none;
+  }
+}

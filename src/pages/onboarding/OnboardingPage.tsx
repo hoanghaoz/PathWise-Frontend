@@ -114,7 +114,7 @@ const OnboardingPage = () => {
             Đăng xuất
           </button>
         </header>
-        <main id="main" tabIndex={-1} className="page page-narrow">
+        <main id="main" tabIndex={-1} className="page page-narrow route-enter">
           <PageHead
             eyebrow="Bắt đầu"
             title="Hồ sơ học tập"

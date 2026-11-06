@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../contexts/useAuth";
 import { useToast } from "../../contexts/useToast";
@@ -30,6 +31,23 @@ const AppShell = () => {
   const { user, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const linksRef = useRef<HTMLElement>(null);
+
+  // Slide the ink under the active link: measure it and publish the
+  // position as CSS variables (no React state, so no extra render).
+  useEffect(() => {
+    const links = linksRef.current;
+    if (!links) return;
+    const place = () => {
+      const active = links.querySelector<HTMLElement>('[aria-current="page"]');
+      links.style.setProperty("--ink-x", `${active?.offsetLeft ?? 0}px`);
+      links.style.setProperty("--ink-w", `${active?.offsetWidth ?? 0}px`);
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [pathname, user?.role]);
 
   if (!user) return null; // RequireAuth renders this only with a user
   const admin = user.role === "ADMIN";
@@ -48,12 +66,17 @@ const AppShell = () => {
         <header className="topnav">
           <div className={cx("topnav-in", admin && "wide")}>
             <Brand to={homePathFor(user.role)} admin={admin} />
-            <nav className="topnav-links" aria-label="Điều hướng chính">
+            <nav
+              ref={linksRef}
+              className="topnav-links"
+              aria-label="Điều hướng chính"
+            >
               {nav.map((item) => (
                 <NavLink key={item.to} className="tn-link" to={item.to}>
                   {item.label}
                 </NavLink>
               ))}
+              <span className="tn-ink" aria-hidden="true" />
             </nav>
             <div className="topnav-user">
               <span className="avatar" aria-hidden="true">
@@ -73,7 +96,9 @@ const AppShell = () => {
           </div>
         </header>
         <main id="main" tabIndex={-1}>
-          <Outlet />
+          <div key={pathname} className="route-enter">
+            <Outlet />
+          </div>
         </main>
       </div>
     </>

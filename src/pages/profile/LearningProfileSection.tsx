@@ -108,7 +108,7 @@ const EditForm = ({ profile, directions, onDone }: EditFormProps) => {
   });
 
   return (
-    <form className="form-stack" noValidate onSubmit={onSubmit}>
+    <form className="form-stack swap-in" noValidate onSubmit={onSubmit}>
       <FormAlert issues={form.issues} formError={form.formError} />
       <ProfileFields
         deadline={form.field("deadline")}
@@ -172,7 +172,7 @@ const SkillChips = ({ title, skills }: { title: string; skills: Skill[] }) => (
 const Summary = ({ profile }: { profile: LearningProfile }) => {
   const left = daysLeftLabel(profile.deadline);
   return (
-    <div className="lp-summary">
+    <div className="lp-summary swap-in">
       <div className="lp-metrics">
         <div className="lp-metric">
           <span className="cap">Hướng học</span>

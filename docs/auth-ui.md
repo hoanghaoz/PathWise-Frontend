@@ -115,3 +115,11 @@ Lỗi từ server được dịch qua `toUserMessage`. Sau 5 lần đăng nhập
 - Skill graph ở hero landing hiện dần theo tầng một lần (`SkillGraph reveal`). Chỉ animate `opacity`, vì `transform` của node đang dùng để đặt vị trí.
 - `SkillGraph` còn có `selected` / `onSelect` (chọn node, làm mờ phần không liên quan, bàn phím Enter/Space) và `naturalSize` (vẽ đúng cỡ pixel, cuộn ngang) cho trang admin.
 - Trạng thái đang tải dùng `components/Skeleton.tsx` thay cho chữ "Đang tải…".
+
+### Chuyển động
+
+- **Vào trang:** `AppShell` bọc nội dung bằng `<div key={pathname} className="route-enter">`, nên mỗi lần đổi route các khối của `.page` trồi lên lần lượt. Trang không nằm trong `AppShell` (auth, onboarding, landing) tự có hiệu ứng vào bằng CSS.
+- **Thanh gạch dưới menu:** `AppShell` đo link đang chọn và ghi `--ink-x` / `--ink-w` lên `<nav>`; CSS (`.tn-ink`) trượt thanh này giữa các link. Không dùng React state.
+- **Bấm nút:** `.btn` co nhẹ khi bấm và bật lại có độ nảy; vệt mực tròn lan ra từ chỗ chạm. `shared/pressOrigin.ts` (gọi ở `main.tsx`) ghi `--px` / `--py` để vệt mực xuất phát đúng vị trí con trỏ. Vệt mực dùng `@property --r` để chỉ animate bán kính, tâm không bị nội suy.
+- **Chọn:** thẻ hướng học và ô kỹ năng "nảy" một lần khi được chọn; toast có animation thoát (`.leaving`).
+- Toàn bộ chuyển động nằm trong `prefers-reduced-motion: no-preference`; khi giảm chuyển động chỉ còn đổi màu/viền.
