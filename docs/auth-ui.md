@@ -14,16 +14,17 @@ Backend phải chạy ở cổng 3000. CORS của backend đã cho phép `http:/
 
 ## Màn hình
 
-| Route                              | Màn                                                            | API                                                               |
-| :--------------------------------- | :------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `/`                                | Landing (hero + skill graph minh họa, 4 bước, nguyên tắc, CTA) | —                                                                 |
-| `/login`                           | Đăng nhập bằng email **hoặc** tên đăng nhập                    | `POST /auth/login`                                                |
-| `/register`                        | Đăng ký, xong tự đăng nhập                                     | `POST /auth/register` → `POST /auth/login`                        |
-| `/forgot-password`                 | Gửi link đặt lại mật khẩu                                      | `POST /auth/forgot-password`                                      |
-| `/reset-password?token=…`          | Đặt mật khẩu mới từ link trong email                           | `POST /auth/reset-password`                                       |
-| `/profile`                         | Thông tin tài khoản, đổi mật khẩu, đăng xuất                   | `GET /auth/me`, `POST /auth/change-password`, `POST /auth/logout` |
-| `/roadmap`, `/progress`, `/result` | Trang chờ: backend chưa có API                                 | —                                                                 |
-| `/admin/*`                         | Trang chờ cho Admin                                            | —                                                                 |
+| Route                                               | Màn                                                               | API                                                                            |
+| :-------------------------------------------------- | :---------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `/`                                                 | Landing (hero + skill graph minh họa, 4 bước, nguyên tắc, CTA)    | —                                                                              |
+| `/login`                                            | Đăng nhập bằng email **hoặc** tên đăng nhập                       | `POST /auth/login`                                                             |
+| `/register`                                         | Đăng ký, xong tự đăng nhập                                        | `POST /auth/register` → `POST /auth/login`                                     |
+| `/forgot-password`                                  | Gửi link đặt lại mật khẩu                                         | `POST /auth/forgot-password`                                                   |
+| `/reset-password?token=…`                           | Đặt mật khẩu mới từ link trong email                              | `POST /auth/reset-password`                                                    |
+| `/profile`                                          | Thông tin tài khoản, đổi mật khẩu, đăng xuất                      | `GET /auth/me`, `POST /auth/change-password`, `POST /auth/logout`              |
+| `/roadmap`, `/progress`, `/result`                  | Trang chờ: backend chưa có API                                    | —                                                                              |
+| `/admin/content`                                    | Bảng quản lý tài liệu: tìm, lọc, thêm, sửa, xóa, cảnh báo thiếu ô | `GET/POST/PATCH/DELETE /admin/resources`, `GET /admin/resources/coverage-gaps` |
+| `/admin/directions`, `/admin/graph`, `/admin/stats` | Trang chờ cho Admin                                               | —                                                                              |
 
 Khác bản thiết kế, có chủ đích:
 
