@@ -6,6 +6,7 @@ import RequireAuth from "./components/routing/RequireAuth";
 import AuthProvider from "./contexts/AuthProvider";
 import ToastProvider from "./contexts/ToastProvider";
 import ComingSoonPage from "./pages/ComingSoonPage";
+import AdminContentPage from "./pages/admin/AdminContentPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -101,15 +102,7 @@ const App = () => (
               />
               <Route
                 path={ROUTES.adminContent}
-                element={
-                  <ComingSoonPage
-                    wide
-                    eyebrow="Quản trị"
-                    title="Tài liệu & câu hỏi"
-                    icon="layers"
-                    text="Quản lý bộ ba tài liệu và ba câu hỏi của mỗi kỹ năng, kèm import CSV."
-                  />
-                }
+                element={<AdminContentPage />}
               />
               <Route
                 path={ROUTES.adminStats}
