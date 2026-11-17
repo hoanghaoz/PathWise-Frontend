@@ -53,6 +53,35 @@ export const newPassword =
     return "";
   };
 
+/** Mirrors the backend: YYYY-MM-DD and a date that exists (no 2030-02-31). */
+export const deadline: Validator = (value) => {
+  const v = value.trim();
+  if (!v) return "Vui lòng chọn hạn hoàn thành.";
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  if (!match) return "Hạn hoàn thành cần có dạng năm-tháng-ngày.";
+  const [year, month, day] = [+match[1], +match[2], +match[3]];
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const real =
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day;
+  return real ? "" : "Ngày này không tồn tại.";
+};
+
+export const HOURS_PER_WEEK_MIN = 1;
+export const HOURS_PER_WEEK_MAX = 60;
+
+export const hoursPerWeek: Validator = (value) => {
+  const v = value.trim();
+  if (!v) return "Vui lòng nhập số giờ học mỗi tuần.";
+  if (!/^\d+$/.test(v)) return "Số giờ học mỗi tuần phải là số nguyên.";
+  const n = Number(v);
+  if (n < HOURS_PER_WEEK_MIN || n > HOURS_PER_WEEK_MAX) {
+    return `Số giờ học mỗi tuần từ ${HOURS_PER_WEEK_MIN} đến ${HOURS_PER_WEEK_MAX}.`;
+  }
+  return "";
+};
+
 export const matches =
   (getOther: () => string, label = "mật khẩu nhập lại"): Validator =>
   (value) => {

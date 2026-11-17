@@ -7,6 +7,7 @@ export const ROUTES = {
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
   // Learner app
+  onboarding: "/onboarding",
   roadmap: "/roadmap",
   progress: "/progress",
   result: "/result",

@@ -12,6 +12,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { toUserMessage } from "../../shared/apiErrorMessages";
 import { handleApiError } from "../../shared/handleApiError";
 import { ROUTES } from "../../shared/routes";
+import LearningProfileSection from "./LearningProfileSection";
 import {
   PASSWORD_HELP,
   matches,
@@ -30,8 +31,8 @@ const formatDate = (iso: string) =>
 
 /**
  * Account section of the design's /profile screen: data from GET /auth/me
- * (kept in AuthProvider), POST /auth/change-password, and logout.
- * The learning-profile section is added when its read API exists.
+ * (kept in AuthProvider), POST /auth/change-password, and logout, plus the
+ * editable learning profile (LearningProfileSection) for learners.
  */
 const ProfilePage = () => {
   usePageTitle("Hồ sơ");
@@ -86,7 +87,8 @@ const ProfilePage = () => {
   return (
     <div className="page page-narrow">
       <PageHead eyebrow="Tài khoản" title="Hồ sơ" />
-      <section className="card card-pad" aria-labelledby="ac-h">
+      {user.role === "USER" && <LearningProfileSection />}
+      <section className="card-raised card-pad" aria-labelledby="ac-h">
         <form className="form-stack" noValidate onSubmit={onSubmit}>
           <h2 id="ac-h" className="h3">
             Tài khoản

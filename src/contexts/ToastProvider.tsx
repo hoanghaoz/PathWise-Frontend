@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import Icon from "../components/Icon";
+import { cx } from "../shared/cx";
 import { ToastContext } from "./toast-context";
 import type { ToastKind } from "./toast-context";
 
@@ -9,9 +10,12 @@ interface Toast {
   id: number;
   message: string;
   kind: ToastKind;
+  /** Playing the exit animation; removed right after. */
+  leaving: boolean;
 }
 
 const TOAST_MS = 3600;
+const TOAST_EXIT_MS = 220;
 
 /** Toasts styled by the design's `.toast-root` / `.toast` classes. */
 const ToastProvider = ({ children }: { children: ReactNode }) => {
@@ -20,9 +24,14 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
 
   const showToast = useCallback((message: string, kind: ToastKind = "ok") => {
     const id = ++nextId.current;
-    setToasts((list) => [...list, { id, message, kind }]);
+    setToasts((list) => [...list, { id, message, kind, leaving: false }]);
     window.setTimeout(() => {
-      setToasts((list) => list.filter((t) => t.id !== id));
+      setToasts((list) =>
+        list.map((t) => (t.id === id ? { ...t, leaving: true } : t)),
+      );
+      window.setTimeout(() => {
+        setToasts((list) => list.filter((t) => t.id !== id));
+      }, TOAST_EXIT_MS);
     }, TOAST_MS);
   }, []);
 
@@ -33,7 +42,7 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
       {children}
       <div className="toast-root" role="status" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className="toast">
+          <div key={t.id} className={cx("toast", t.leaving && "leaving")}>
             <Icon name={t.kind === "warn" ? "alert" : "check"} />
             <span>{t.message}</span>
           </div>

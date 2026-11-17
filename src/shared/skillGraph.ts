@@ -117,3 +117,30 @@ export function layoutGraph(
     : PAD * 2 + span;
   return { width, height, pos, edges };
 }
+
+/**
+ * Every skill connected to `slug` through prerequisites, in both directions:
+ * all skills it needs (transitively) and all skills that need it. Used to
+ * light up a selected skill's neighbourhood in the admin graph.
+ */
+export function relatedSlugs(skills: GraphSkill[], slug: string): Set<string> {
+  const needs = new Map(skills.map((s) => [s.slug, s.prereqs]));
+  const neededBy = new Map<string, string[]>();
+  skills.forEach((s) =>
+    s.prereqs.forEach((p) =>
+      neededBy.set(p, [...(neededBy.get(p) ?? []), s.slug]),
+    ),
+  );
+  const walk = (start: string, next: Map<string, string[]>) => {
+    const seen = new Set<string>();
+    const stack = [...(next.get(start) ?? [])];
+    while (stack.length) {
+      const current = stack.pop()!;
+      if (seen.has(current)) continue;
+      seen.add(current);
+      stack.push(...(next.get(current) ?? []));
+    }
+    return seen;
+  };
+  return new Set([...walk(slug, needs), ...walk(slug, neededBy)]);
+}

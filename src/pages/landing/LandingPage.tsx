@@ -149,6 +149,7 @@ const LandingPage = () => {
                 skills={HERO_SKILLS}
                 results={HERO_RESULTS}
                 targets={HERO_TARGETS}
+                reveal
                 vertical
                 label="Ví dụ kết quả đánh giá trên skill graph Backend Web"
               />
@@ -164,10 +165,12 @@ const LandingPage = () => {
                   Bốn bước từ mục tiêu đến kế hoạch tuần
                 </h2>
               </div>
-              <ol className="grid-4 list-reset">
+              <ol className="steps-rail list-reset">
                 {STEPS.map(([title, text], i) => (
-                  <li key={title} className="step-card principles-step">
-                    <span className="step-n">0{i + 1}</span>
+                  <li key={title} className="step-card">
+                    <span className="step-n" aria-hidden="true">
+                      {i + 1}
+                    </span>
                     <h3>{title}</h3>
                     <p className="small muted">{text}</p>
                   </li>
@@ -197,27 +200,29 @@ const LandingPage = () => {
             </div>
           </section>
 
-          <section className="lp-section lp-cta" aria-labelledby="cta-h">
-            <div className="cta-grid">
-              <div className="od-stack" style={odGap("16px")}>
-                <h2 id="cta-h">Bắt đầu từ chỗ bạn đang đứng</h2>
-                <p className="lead">
-                  Khai báo mục tiêu, làm quiz đầu vào và nhận lộ trình theo tuần
-                  có thể theo dõi tiến độ.
-                </p>
-                <div>
-                  <Link className="btn btn-primary" to={enter}>
-                    {user ? "Mở lộ trình của tôi" : "Tạo tài khoản"}
-                    <Icon name="arrowR" />
-                  </Link>
+          <div className="lp-cta-band">
+            <section className="lp-section lp-cta" aria-labelledby="cta-h">
+              <div className="cta-grid">
+                <div className="od-stack" style={odGap("16px")}>
+                  <h2 id="cta-h">Bắt đầu từ chỗ bạn đang đứng</h2>
+                  <p className="lead">
+                    Khai báo mục tiêu, làm quiz đầu vào và nhận lộ trình theo
+                    tuần có thể theo dõi tiến độ.
+                  </p>
+                  <div>
+                    <Link className="btn btn-primary" to={enter}>
+                      {user ? "Mở lộ trình của tôi" : "Tạo tài khoản"}
+                      <Icon name="arrowR" />
+                    </Link>
+                  </div>
                 </div>
+                <Mascot
+                  className="cta-mascot"
+                  alt="Gấu PathWise đeo kính, mặc hoodie, đang lập trình trên laptop"
+                />
               </div>
-              <Mascot
-                className="cta-mascot"
-                alt="Gấu PathWise đeo kính, mặc hoodie, đang lập trình trên laptop"
-              />
-            </div>
-          </section>
+            </section>
+          </div>
         </main>
 
         <footer className="lp-footer">

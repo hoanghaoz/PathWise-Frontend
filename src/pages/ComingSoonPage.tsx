@@ -28,7 +28,12 @@ const ComingSoonPage = ({
   return (
     <div className={cx("page", wide && "page-wide")}>
       <PageHead eyebrow={eyebrow} title={title} />
-      <EmptyState icon={icon} title="Màn hình đang được xây dựng" text={text} />
+      <EmptyState
+        icon={icon}
+        title="Màn hình đang được xây dựng"
+        text={text}
+        preview
+      />
     </div>
   );
 };
